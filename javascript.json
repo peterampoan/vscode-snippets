@@ -1,0 +1,123 @@
+{
+	// Place your snippets for javascript here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	"console.log": {
+		"prefix": "cl",
+		"body": [
+			"console.log(${TM_SELECTED_TEXT:$1});"
+		],
+		"description": "Log output to console"
+	},
+	"trace": {
+		"prefix": "trace",
+		"body": [
+			"console.log('========HERE==========');",
+			"console.log(${TM_SELECTED_TEXT:$1});",
+			"console.log('========HERE==========');"
+		],
+		"description": "Log output to console for tracing"
+	},
+	"custom_route": {
+		"prefix": "custom_route",
+		"body": [
+			"custom?custom_url=custom_employee/import"
+		],
+		"description": "custom route configure"
+	},
+	"is_blank?": {
+		"prefix": "is_blank?",
+		"body": [
+			"var isBlank = function (value) {",
+				"return value == undefined || value == null || value.toString() == '';",
+			"};"
+		],
+		"description": "check if variable is blank"
+	},
+	"get_date_format": {
+		"prefix": "get_date_format",
+		"body": [
+			"${TM_SELECTED_TEXT:$1} == null ? ${TM_SELECTED_TEXT:$1} : ${TM_SELECTED_TEXT:$1}.toISOString().slice(0, 10).replace('T', ' ')"
+		],
+		"description": "check if variable is blank"
+	},
+	"get_time_format": {
+		"prefix": "get_time_format",
+		"body": [
+			"${TM_SELECTED_TEXT:$1} == null ? ${TM_SELECTED_TEXT:$1} : ${TM_SELECTED_TEXT:$1}.toISOString().slice(0, 19).replace('T', ' ')"
+		],
+		"description": "check if variable is blank"
+	},
+	"data_by_id": {
+		"prefix": "/data_by_id",
+		"body": [
+			"router.post('/data_by_id', async (req, res) => {",
+				"try {",
+					"const id = req.body.id",
+					"const sess = res.locals.session",
+					"const sqlConn = res.locals.sqlConn",
+			
+					"const accessKey = ['$1']",
+					"const securityKey = await Db.getPPHSecurityKey(res, accessKey)",
+			
+					"let hasAccess = Object.keys(securityKey).length > 0 ? true : false",
+			
+					"if (hasAccess) {",
+						"const result = await sqlConn.request()",
+							".input('id', sql.Int, id)",
+							".input('company_id', sql.Int, sess.company_id)",
+							".query(`SELECT $2",
+									"FROM $3",
+										"WHERE $4`)",
+			
+						"res.json(result.recordset)",
+					"}",
+					"else {",
+					"res.json({error_message: 'Access Denied', id: id})",
+					"}",
+				"}",
+			"catch (err) {",
+					"res.json({error_message: err.message, id})",
+				"}",
+			"})",
+			
+		],
+		"description": "data by id"
+	},
+	"return result": {
+		"prefix": "get_result",
+		"body": [
+			"const result = await sqlConn.request()",
+			".input('id', sql.Int, id)",
+			".input('company_id', sql.Int, sess.company_id)",
+			".query(`SELECT $1 FROM $2 WHERE $3`)",
+			"res.json(result.recordset)"
+		],
+		"description": "select query for node js"
+	},
+	"blank router": {
+		"prefix": "blank_router",
+		"body": [
+			"router.get('/test', async (req, res) => {",
+				"const id = req.body.id",
+				"try {",
+					"const sess = res.locals.session",
+					"const sqlConn = res.locals.sqlConn",
+			
+					"const result = await sqlConn.request()",
+						".input('id', sql.Int, id)",
+						".input('company_id', sql.Int, sess.company_id)",
+						".query(`SELECT * FROM `)",
+			
+					"res.json(result.recordset)",
+				"}",
+				"catch {",
+					"res.json({})",
+				"}",
+			"})",
+		],
+		"description": "blank router for node js"
+	},
+}
